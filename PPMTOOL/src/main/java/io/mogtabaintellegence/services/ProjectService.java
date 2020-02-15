@@ -1,7 +1,9 @@
 package io.mogtabaintellegence.services;
 
+import io.mogtabaintellegence.domain.Backlog;
 import io.mogtabaintellegence.domain.Project;
 import io.mogtabaintellegence.exceptions.ProjectIdException;
+import io.mogtabaintellegence.repositories.BacklogRepository;
 import io.mogtabaintellegence.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private BacklogRepository backlogRepository;
 
     public Project SaveOrUpdateProject(Project project) {
         try {
             project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+            if (project.getId() == null){
+                Backlog backlog = new Backlog();
+                project.setBacklog(backlog);
+                backlog.setProject(project);
+                backlog.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+            }
+            if (project.getId() != null) {
+                project.setBacklog(backlogRepository.findByProjectIdentifier(project.getProjectIdentifier().toUpperCase()));
+            }
            return projectRepository.save(project);
         }catch (Exception e) {
 
