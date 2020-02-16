@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by Interface 3 on 2/16/2020.
@@ -32,5 +33,9 @@ public class BacklogController {
         if (errorMap !=null) return errorMap;
         ProjectTask projectTask1 = projectTaskService.addProjectTask(backlog_id,projectTask);
         return new ResponseEntity<ProjectTask>(projectTask1, HttpStatus.CREATED);
+    }
+    @GetMapping("/{backlog_id}")
+    public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlog_id) {
+        return projectTaskService.findBacklogById(backlog_id);
     }
 }
