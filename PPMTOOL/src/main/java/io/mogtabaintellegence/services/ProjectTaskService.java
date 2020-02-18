@@ -38,7 +38,7 @@ public class ProjectTaskService {
             projectTask.setProjectSequence(projectIdentifier + "-" + BacklogSequence);
             projectTask.setProjectIdentifier(projectIdentifier);
             //Initial priority when priority is null
-            if (projectTask.getPriority()==null){
+            if (projectTask.getPriority()== 0 || projectTask.getPriority()==null){
                 // in the future we want this projectTask.getPriority() == 0 to handle form.
                 projectTask.setPriority(3);
             }
