@@ -4,7 +4,7 @@ package io.mogtabaintellegence.exceptions;
  * Created by Interface 3 on 2/21/2020.
  */
 public class InvalidLoginResponse {
-    private  String username;
+    private String username;
     private String password;
 
     public InvalidLoginResponse() {

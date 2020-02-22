@@ -3,6 +3,7 @@ package io.mogtabaintellegence.web;
 import io.mogtabaintellegence.domain.User;
 import io.mogtabaintellegence.services.MapValidationErrorService;
 import io.mogtabaintellegence.services.UserService;
+import io.mogtabaintellegence.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +24,23 @@ import javax.validation.Valid;
 public class UserController {
     @Autowired
     private MapValidationErrorService mapValidationErrorService;
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserValidator userValidator;
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result){
-        // validate Password match
-
+        // Validate passwords match
+        userValidator.validate(user,result);
         ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
-        if (errorMap != null) return errorMap;
+        if(errorMap != null)return errorMap;
 
         User newUser = userService.saveUser(user);
-        return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
+
+        return  new ResponseEntity<User>(newUser, HttpStatus.CREATED);
     }
 
 }

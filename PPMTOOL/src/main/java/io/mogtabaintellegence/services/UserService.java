@@ -1,6 +1,7 @@
 package io.mogtabaintellegence.services;
 
 import io.mogtabaintellegence.domain.User;
+import io.mogtabaintellegence.exceptions.UsernameAlreadyExistsException;
 import io.mogtabaintellegence.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,19 +12,27 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public User saveUser(User newUser) {
-       newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
-       // username has to be unique(custom exception)
+    public User saveUser (User newUser){
+        try{
+            newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+            //Username has to be unique (exception)
+            newUser.setUsername(newUser.getUsername());
+            // Make sure that password and confirmPassword match
+            // We don't persist or show the confirmPassword
+            newUser.setConfirmPassword("");
+            return userRepository.save(newUser);
 
-        //Make sure that password and confirmPassword match
-
-        // we don't persist or show confirmPassword
-       return userRepository.save(newUser);
+        }catch (Exception e){
+            throw new UsernameAlreadyExistsException("Username '"+newUser.getUsername()+"' already exists");
+        }
     }
+
+
+
 }
